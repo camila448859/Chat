@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
+  <style type="text/css">
+    body {
+      background: url(https://images.unsplash.com/photo-1495808985667-ba4ce2ef31b3?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80);
+      background-size: cover
+    }
+
+    .conteiner {
+      background: rgba(10, 14, 14, 0.95);
+      max-width: 600px;
+      height: 800px;
+      margin: 25px auto;
+      box-sizing: border-box;
+      padding: 1em;
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .conteiner #chat{
+      color:gainsboro;
+      font-family: 'Courier New', Courier, monospace;
+    }
+
+    .conteiner .col-mensajes {
+      background-color: #b1e2da;
+      padding: 5px;
+      max-width: 600px;
+      height: 600px;
+      overflow: scroll;
+      border-radius: 15px;
+    }
+
+    .col-mensajes .chat-view {
+      border-radius: 12px;
+      background-color: #f0f8ff;
+      font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
+
+    .escribir {
+      background-color: #f0f8ff;
+      border-radius: 10px;
+      width: 550px;
+      height: 50px;
+      padding: 10px;
+    }
+
+    .escribir input[type="text"] {
+      background: transparent;
+      border-radius: 15px;
+      width: 10vw;
+      margin-left: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .escribir button {
+      background-color: cadetblue;
+      border-radius: 10px;
+      width: 8vw;
+      margin-left: 1rem;
+      font-size: 0.9rem;
+    }
+  </style>
+  <title>Chat</title>
+</head>
+
+<body>
+  <div class="card">
+    <div class="conteiner">
+      <div id="chat">
+        <div id="notificaciones"></div>
+      </div>
+      <div class="col-mensajes">
+        <div class="chat-view">
+
+          <div id="salida"></div>
+          <ul id="not"></ul>
+
+        </div>
+
+      </div>
+      <br>
+      <br>
+      <div class="escribir">
+        <input type="text" id="usuario" placeholder="Usuario" class="text-success" required>
+        <input type="text" id="mensaje" placeholder="Mensaje" required>
+
+        <button class="enviar" id="enviar">Enviar</button>
+        <img src="img/chat.png">
+      </div>
+    </div>
+    <script src="js/socket.io.js"></script>
+    <script src="js/logica.js" charset="utf-8"></script>
+
+    <script>
+      var socket = io()
+      var nick = prompt('Cual es tu nombre?')
+
+      $("#usuario").val(nick)
+      socket.emit('nuevouser', nick)
+
+      socket.on('usuario conectado', (data) => {
+        getUsuarios()
+      })
+
+      socket.on('mensaje', deslizar)
+
+      function deslizar() {
+        $("#salida").animate({
+          scrollTop: $('#salida').get(0).scrollHeight
+        }, 100)
+      }
+
+      function agregarUsuarios(data) {
+        $("#col-usuarios").append(`<li>${data.usuarios}</li>`)
+      }
+
+      function getUsuarios() {
+        $.get("http://localhost:3000/usuarios", (data) => {
+          data.forEach(agregarUsuarios)
+        })
+      }
+    </script>
+</body>
+
+</html>
