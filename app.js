@@ -1,7 +1,10 @@
-const express = require('express');
-var app = require('express')();
-var server = require('http').Server(app);
-var io = require('socket.io')(server);
+import express from 'express';
+import http from 'http';
+import socket from 'socket.io';
+
+var app = express();
+var server = http.Server(app);
+var io = socket(server);
 
 var usuarios = [
   {
@@ -9,10 +12,10 @@ var usuarios = [
   }
 ]
 
-app.set('port', process)
+app.set('port', process.env.PORT || 3000);
+server.listen(app.get('port'), ()=> console.log('escuchando en 3000'))
 
 app.use(express.static('public'));
-server.listen(3000, () => console.log('Servidor iniciado en 3000'));
 
 app.get('/', function (req, res) {
   res.sendFile(__dirname + 'public');
